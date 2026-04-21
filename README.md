@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project was worked on by the Smokey the Databears team of the Spring 2026 CMDA Capstone Course at Virginia Tech. Most of this code is borrowed from the **Wildfire_Infrastructure_Threat_Unet** Git Project created by CNA. With their permission and assistance, our team developed the following Wildfire U-Net Model which builds off of their original work.
+This project was worked on by the Smokey the Databears team of the Spring 2026 CMDA Capstone Course at Virginia Tech. Most of this code is borrowed with permission from the **Wildfire_Infrastructure_Threat_Unet** Git Project created by CNA. With their assistance, our team developed the following Wildfire U-Net Model which builds off of their original work.
 
 ## Repository Structure
 
