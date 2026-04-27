@@ -1,22 +1,19 @@
-
-
-
 # Installing the necessary packages
-# Suppress already satisfied warning using: | find /V "already satisfied"
-# %pip install -r requirements.txt | find /V "already satisfied"
+# (only run this once if needed)
+# %pip install -r requirements.txt
 
-# Standard library imports
+# basic imports
 import os
 from pathlib import Path
 import warnings
 import import_ipynb
 
-# Third-party library imports
+# plotting + math stuff
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import train_test_split
 
-# Custom utility functions
+# helper functions from utils notebook
 from utils import (
     load_images_and_masks,
     view_data,
@@ -28,7 +25,7 @@ from utils import (
     custom_warnings,
 )
 
-# importing these but not using unet_model anymore
+# still importing these even though we aren't using unet_model anymore
 from unet import (
     test_unet,
     plot_losses,
@@ -37,6 +34,7 @@ from unet import (
     dice_coeff,
 )
 
+# hide tensorflow warnings
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 from tensorflow.keras import callbacks, optimizers
@@ -44,6 +42,7 @@ import tensorflow as tf
 
 warnings.formatwarning = custom_warnings
 
+# setting seeds so results are repeatable
 PRODUCTION = False
 seed_value = 42
 
@@ -52,14 +51,14 @@ if not PRODUCTION:
     tf.random.set_seed(seed_value)
     os.environ["PYTHONHASHSEED"] = str(seed_value)
 
-# directories
+# file paths
 images_dir = "Datasets/Pala_Mesa_Roads_Rails/images"
 masks_dir = "Datasets/Pala_Mesa_Roads_Rails/labels"
 model_dir = "models"
 model_name = "trained_UNet_Pala_Mesa.keras"
 model_path = Path(f"{model_dir}/{model_name}")
 
-# load data
+# load images + masks
 images, masks, missing_masks, names_map = load_images_and_masks(
     images_dir,
     masks_dir,
@@ -68,9 +67,10 @@ images, masks, missing_masks, names_map = load_images_and_masks(
     trim_names=True
 )
 
+# examples testing
 view_data(images=images, masks=masks, max_plots=10, max_cols=5, randomize=True, colors=True)
 
-# preprocessing
+# preprocessing step 
 num_classes = 4
 
 preprocessed_images, preprocessed_masks, threshold, image_names, num_classes = (
@@ -82,59 +82,67 @@ preprocessed_images, preprocessed_masks, threshold, image_names, num_classes = (
     )
 )
 
-# add after preprocessing  
 
-from scipy.ndimage import distance_transform_edt
+
+
+from scipy.ndimage import distance_transform_edt  # used to compute distance from roads
 
 # VEGETATION (NDVI)
-# used chatgpt for this 
+# how green something is
 def compute_ndvi(images):
     ndvi_maps = []
 
     for img in images:
+        # grabbing red + near infrared bands
         red = img[:, :, 0].astype(np.float32)
         nir = img[:, :, 1].astype(np.float32)
 
+        # NDVI formula
         ndvi = (nir - red) / (nir + red + 1e-6)
 
+        # turning NDVI into categories
         veg_class = np.zeros_like(ndvi)
 
-        veg_class[ndvi < 0.2] = 0
-        veg_class[(ndvi >= 0.2) & (ndvi < 0.5)] = 1
-        veg_class[ndvi >= 0.5] = 2
+        veg_class[ndvi < 0.2] = 0  # low vegetation
+        veg_class[(ndvi >= 0.2) & (ndvi < 0.5)] = 1  # medium
+        veg_class[ndvi >= 0.5] = 2 # dense
 
         ndvi_maps.append(veg_class)
 
     return np.array(ndvi_maps)
 
 
-# ROAD RISK
+# road risk
+# closer to roads = higher risk
 def compute_road_risk(masks):
     road_risk_maps = []
 
     for mask in masks:
+        # assume roads are labeled as class 1 --> fix this
         road_mask = (mask == 1).astype(np.uint8)
 
+        # distance from road
         distance = distance_transform_edt(1 - road_mask)
         distance = distance / np.max(distance)
 
+        # convert distance to risk level
         risk = np.zeros_like(distance)
 
-        risk[distance < 0.1] = 3
+        risk[distance < 0.1] = 3   # very close = high risk
         risk[(distance >= 0.1) & (distance < 0.3)] = 2
         risk[(distance >= 0.3) & (distance < 0.6)] = 1
-        risk[distance >= 0.6] = 0
+        risk[distance >= 0.6] = 0  # far away = low risk
 
         road_risk_maps.append(risk)
 
     return np.array(road_risk_maps)
 
 
-# generate labels
+# generate extra labels
 vegetation_maps = compute_ndvi(preprocessed_images)
 road_risk_maps = compute_road_risk(preprocessed_masks)
 
-# binary burn masks
+# convert fire to binary (fire vs no fire)
 binary_masks = (preprocessed_masks > 0).astype(np.uint8)
 
 print("Vegetation maps:", vegetation_maps.shape)
@@ -186,13 +194,15 @@ print("Binary burn masks:", binary_masks.shape)
 )
 
 
-# model 
+# new model attempt
+
 from tensorflow.keras import layers, Model
 
 def multi_output_unet(input_shape=(256,256,3)):
 
     inputs = layers.Input(shape=input_shape)
 
+    # encoder - extract features
     c1 = layers.Conv2D(64, 3, activation='relu', padding='same')(inputs)
     c1 = layers.Conv2D(64, 3, activation='relu', padding='same')(c1)
     p1 = layers.MaxPooling2D()(c1)
@@ -201,9 +211,11 @@ def multi_output_unet(input_shape=(256,256,3)):
     c2 = layers.Conv2D(128, 3, activation='relu', padding='same')(c2)
     p2 = layers.MaxPooling2D()(c2)
 
+    # bottleneck
     b = layers.Conv2D(256, 3, activation='relu', padding='same')(p2)
     b = layers.Conv2D(256, 3, activation='relu', padding='same')(b)
 
+    # decoder
     u1 = layers.UpSampling2D()(b)
     u1 = layers.concatenate([u1, c2])
     c3 = layers.Conv2D(128, 3, activation='relu', padding='same')(u1)
@@ -212,6 +224,7 @@ def multi_output_unet(input_shape=(256,256,3)):
     u2 = layers.concatenate([u2, c1])
     c4 = layers.Conv2D(64, 3, activation='relu', padding='same')(u2)
 
+    # outputs
     burn_output = layers.Conv2D(1, 1, activation="sigmoid", name="burn_output")(c4)
     veg_output = layers.Conv2D(3, 1, activation="softmax", name="veg_output")(c4)
     road_output = layers.Conv2D(4, 1, activation="softmax", name="road_output")(c4)
@@ -221,6 +234,7 @@ def multi_output_unet(input_shape=(256,256,3)):
 
 model = multi_output_unet()
 
+# compiling model
 model.compile(
     optimizer=tf.keras.optimizers.Adam(1e-4),
     loss={
@@ -238,7 +252,7 @@ model.compile(
 model.summary()
 
 
-# training
+# train
 model_fit = model.fit(
     images_train,
     {
@@ -260,7 +274,7 @@ model_fit = model.fit(
 )
 
 
-# predictions
+# predict
 preds = model.predict(images_test)
 
 burn_preds = preds[0]
@@ -268,7 +282,7 @@ veg_preds = preds[1]
 road_preds = preds[2]
 
 
-# visualization
+# visuals 
 def show_results(idx):
     plt.figure(figsize=(15,5))
 
