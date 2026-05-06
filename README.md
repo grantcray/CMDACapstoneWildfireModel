@@ -25,7 +25,7 @@ CMDACapstoneWildfireModel/
 - **main.ipynb**: The entry point for the project. This notebook coordinates the overall workflow, calling functions and models defined in the other notebooks.
 - **utils.ipynb**: Contains utility functions that support data preprocessing, visualization, and other auxiliary tasks.
 - **unet.ipynb**: Implements the U-Net model, a convolutional neural network designed for image segmentation tasks, and functions associated with the U-Net.
-- **dataInspection.ipynb**: Contains utility functions used to inspect the training data used for this model.
+- **dataInspection.ipynb**: Contains data auditing and inspection utilities used to validate image-mask consistency, analyze class distributions, detect dataset irregularities, and inspect segmentation labels before model training.
 - **multiOutput.py**: Contains the multi output approach used to rebalance the wildfire risk classes in this model.
 - **requirements.txt**: Lists the Python packages required to run the project.
 - **README.md**: Provides an overview of the project, installation instructions, and usage information.
