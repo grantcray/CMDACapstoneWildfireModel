@@ -29,10 +29,10 @@ CMDACapstoneWildfireModel/
 - **unet.ipynb**: Implements the U-Net model, a convolutional neural network designed for image segmentation tasks, and functions associated with the U-Net.
 - **requirements.txt**: Lists the Python packages required to run the project.
 - **README.md**: Provides an overview of the project, installation instructions, and usage information.
-- **WeightedLoss/** Directory that contains the Weighted Loss function and versions of the model that integrate it.
+- **WeightedLoss/**: Directory that contains the Weighted Loss function and versions of the model that integrate it.
 - **DataInspection/**: Directory that contains the dataInspection code and versions of the model that integrate it.
 - **Multi-Output/**: Directory that contains the Multi-Output prediction framework.
-- **Visualizations/**: Directory to store graphs and visualizations used in our reports.
+- **Visualizations/**: Directory to store graphs used to visualize the results of our implementations.
 - **Datasets/**: Directory to store datasets used in the project.
 - **models/**: Directory to save trained models, mask predictions, and related files.
 - **resources/**: Directory for additional resources such as images, documentation, or other files.
