@@ -2,17 +2,20 @@
 
 ## Overview
 
-This project was worked on by the Smokey the Databears team of the Spring 2026 CMDA Capstone Course at Virginia Tech. Most of this code is borrowed with permission from the **Wildfire_Infrastructure_Threat_Unet** Git Project created by CNA. With their assistance, our team developed the following Wildfire U-Net Model which builds off of their original work.
+This file contains the Multi-Output prediction framework used on the U-Net model. This model simultaneously predicts wildfire presence, vegetation classification, and road risk using satellite imagery. The model was trained on 1,000 RGB satellite images (256 × 256 pixels) and corresponding segmentation masks. Additional environmental features were also generated, including NDVI-based vegetation maps and road risk maps calculated using distance from roads. 
+
+The model produced three outputs:
+1. Burn prediction (fire vs. non-fire)
+2. Vegetation classification
+3. Road risk classification
 
 ## Repository Structure
 
 ```
+Multi-Output/
 |-- main_multi_output.ipynb
 |-- README.md
 ```
 
-- **main.ipynb**: The entry point for the project. This notebook coordinates the overall workflow, calling functions and models defined in the other notebooks. Runs on the Pala Mesa Dataset by default.
-- **main_with_woolsey.ipynb**: The main notebook for this project, but ran on the Woolsey dataset. Used to illustrate the differences between the Pala Mesa and Woolsey datasets.
-- **main_dual_datasets.ipynb**: The main notebook for this project, but using the dual dataset training strategy. Combines the Pala Mesa and Woolsey datasets by default and runs the U-Net model on the merged dataset.
-- **utils.ipynb**: Contains utility functions that support data preprocessing, visualization, and other auxiliary tasks.
-- **unet.ipynb**: Implements the U-Net model, a convolutional neural network designed for image segmentation tasks, and functions associated with the U-Net.
+- **main_multi_output.ipynb**: This file contains the Multi-Output prediction framework used on the Pala Mesa trained U-Net model. This notebook doesn't differ much from the regular **main.ipynb** file besides from using the multi-output functions.
+- **README.md**: This file, explains the structure of the Multi-Output directory.
