@@ -19,6 +19,10 @@ CMDACapstoneWildfireModel/
 |-- Datasets/
 |-- models/
 |-- resources/
+|-- DataInspection/
+|-- WeightedLoss/
+|-- Multi-Ouput/
+|-- Visualizations/
 
 ```
 
