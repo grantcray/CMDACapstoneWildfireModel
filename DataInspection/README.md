@@ -9,13 +9,17 @@ This file contains the data auditing and label validation pipeline used to inspe
 ```
 DataInspection/
 |-- main_dual_datasets_output.ipynb
+|-- main_dual_datasets_weighted_loss_output.ipynb
 |-- unet_output.ipynb
+|-- unet_weighted_loss_output.ipynb
 |-- dataInspection.ipynb
 |-- README.md
 ```
 
 - **main_dual_datasets_output.ipynb**: This file is a modified version of the **main_dual_datasets.ipynb** file that displays additional information related to the Pala Mesa and Woolsey merged dataset.
+- **main_dual_datasets_weighted_loss_output.ipynb**: This file is a modified version of the **main_dual_datasets_weighted_loss.ipynb** file that displays additional information related to the Pala Mesa and Woolsey merged dataset.
 - **unet_output.ipynb**: This file is a modified version of the **unet.ipynb** file that displays additional information related to the image data trained by the U-Net model.
+- **unet_weighted_loss_output.ipynb**: This file is a modified version of the **unet_weighted_loss.ipynb** file that displays additional information related to the image data trained by the U-Net model.
 - **dataInspection.ipynb**: This file contains the main data auditing process used to anaylze the image masks, labels, and wildfire risk class distributions of our U-Net data. By default, this file anaylzes the Pala Mesa dataset.
 - **README.md**: This file, explains the structure of the DataInspection directory.
 
