@@ -4,7 +4,7 @@
 
 This file contains the Multi-Output prediction framework used on the U-Net model. This model simultaneously predicts wildfire presence, vegetation classification, and road risk using satellite imagery. The model was trained on 1,000 RGB satellite images (256 × 256 pixels) and corresponding segmentation masks. Additional environmental features were also generated, including NDVI-based vegetation maps and road risk maps calculated using distance from roads. 
 
-The model produced three outputs:
+This model produces three outputs:
 1. Burn prediction (fire vs. non-fire)
 2. Vegetation classification
 3. Road risk classification
