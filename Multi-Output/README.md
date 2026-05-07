@@ -18,4 +18,4 @@ Multi-Output/
 ```
 
 - **main_multi_output.ipynb**: This file contains the Multi-Output prediction framework used on the Pala Mesa trained U-Net model. This notebook doesn't differ much from the regular **main.ipynb** file besides from using the multi-output functions.
-- **README.md**: This file, explains the structure of the Multi-Output directory.
+- **README.md**: This file, explains the structure of the Multi-Output prediction framework.
