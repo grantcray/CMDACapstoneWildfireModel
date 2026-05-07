@@ -14,7 +14,7 @@ DataInspection/
 |-- README.md
 ```
 
-- **main_dual_datasets_output.ipynb**: This file runs the Dual Dataset training approach on the U-Net model, but displays additional information related to the Pala Mesa and Woolsey merged dataset. This notebook doesn't differ much from the regular **main_dual_datasets.ipynb** file.
+- **main_dual_datasets_output.ipynb**: This file is a modified version of the **main_dual_datasets.ipynb** file that displays additional information related to the Pala Mesa and Woolsey merged dataset.
 - **unet_output.ipynb**: This file is a modified version of the **unet.ipynb** file that displays additional information related to the image data trained by the U-Net model.
 - **dataInspection.ipynb**: This file contains the main data auditing process used to anaylze the image masks, labels, and wildfire risk class distributions of our U-Net data. By default, this file anaylzes the Pala Mesa dataset.
 - **README.md**: This file, explains the structure of the DataInspection directory.
